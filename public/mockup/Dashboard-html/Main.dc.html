@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Dashboard FinTrack</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #4B3FCB;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="box-sizing:border-box;width:100%;min-height:1400px;padding:24px;background:#E4E7F1;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1B1D3A">
+<div style="max-width:1392px;margin:0 auto;background:#FFFFFF;border-radius:28px;display:flex;flex-wrap:wrap;overflow:hidden;box-shadow:0 24px 60px rgba(40,44,90,0.10)">
+
+  <!-- SIDEBAR -->
+  <aside style="box-sizing:border-box;flex:1 1 248px;max-width:100%;background:#F7F8FD;border-right:1px solid #ECEEF7;padding:28px 20px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px">
+      <div style="width:34px;height:34px;border-radius:11px;background:#4B3FCB;display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg>
+      </div>
+      <span style="font-size:20px;font-weight:800;letter-spacing:-0.3px;color:#2B2670">FinTrack</span>
+    </div>
+
+    <nav aria-label="Menu utama" style="display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:12px;font-weight:600;color:#5B5F80;padding:0 12px 8px;letter-spacing:0.4px">MENU UTAMA</div>
+      <sc-for list="{{nav1}}" as="n" hint-placeholder-count="6">
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;font-size:14px;font-weight:600;min-height:20px;{{n.st}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"></path></svg>
+          <span>{{n.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <nav aria-label="Pengaturan" style="display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:12px;font-weight:600;color:#5B5F80;padding:0 12px 8px;letter-spacing:0.4px">PENGATURAN &amp; AKUN</div>
+      <sc-for list="{{nav2}}" as="n" hint-placeholder-count="3">
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;font-size:14px;font-weight:600;color:#4A4E70">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"></path></svg>
+          <span>{{n.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <div style="margin-top:auto;border-radius:20px;padding:20px 18px;background:linear-gradient(160deg,#ECEBFC 0%,#F9E9E3 100%);display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#12A07A"></span>
+        <span style="font-size:12px;font-weight:700;color:#0B6B52">Remote MCP aktif</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:#1B1D3A">Claude terhubung</div>
+      <div style="font-size:12.5px;line-height:1.5;color:#4A4E70">Token akses baca &amp; tulis berlaku. Kamu bisa meminta AI mencatat atau mengaudit pengeluaran dari chat.</div>
+      <button style="margin-top:4px;border:0;border-radius:12px;background:#fff;padding:11px 14px;font-size:13px;font-weight:700;color:#2B2670;min-height:44px;box-shadow:0 4px 12px rgba(75,63,203,0.12)">Kelola token</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="box-sizing:border-box;flex:999 1 560px;min-width:0;padding:28px 32px 36px;display:flex;flex-direction:column;gap:24px">
+
+    <!-- Top bar -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+      <label style="flex:1 1 320px;max-width:600px;display:flex;align-items:center;gap:10px;background:#F4F5FB;border:1px solid #E7E9F5;border-radius:14px;padding:0 8px 0 16px;min-height:48px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4B3FCB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"></path></svg>
+        <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Quick-Add: ketik transaksi dalam kalimat</span>
+        <input type="text" value="{{qa}}" onChange="{{onQa}}" placeholder="Ketik: Kopi kenangan 24rb gopay" style="flex:1;min-width:0;border:0;background:transparent;font-size:14px;font-weight:500;color:#1B1D3A;outline-offset:6px;padding:12px 0">
+        <span style="font-size:12px;font-weight:600;color:#5B5F80;background:#fff;border:1px solid #E7E9F5;border-radius:8px;padding:4px 8px">Quick-Add</span>
+      </label>
+      <div style="flex:1 1 0"></div>
+      <button onClick="{{toggleBlur}}" aria-pressed="{{blurOn}}" aria-label="Mode privasi: samarkan nominal" style="display:flex;align-items:center;gap:8px;border:1px solid #E1E4F2;background:#fff;color:#2B2670;border-radius:14px;padding:0 14px;min-height:48px;font-size:13px;font-weight:700">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{eyeD}}"></path><path d="{{eyeD2}}"></path></svg>
+        <span>{{blurLabel}}</span>
+      </button>
+      <button style="display:flex;align-items:center;gap:8px;border:0;background:#4B3FCB;color:#fff;border-radius:14px;padding:0 18px;min-height:48px;font-size:14px;font-weight:700;box-shadow:0 8px 18px rgba(75,63,203,0.28)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        <span>Catat Transaksi</span>
+      </button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:44px;height:44px;border-radius:50%;background:#FFD9C9;color:#8A3A1D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px" aria-hidden="true">D</div>
+        <div style="font-size:14px;font-weight:700;line-height:1.2">Hai, Dimas<div style="font-size:12px;font-weight:600;color:#5B5F80">Paket Pro</div></div>
+      </div>
+    </div>
+
+    <!-- Quick-add preview -->
+    <sc-if value="{{qaValid}}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:#F4F3FE;border:1px solid #DEDBFA;border-radius:16px;padding:12px 16px">
+        <span style="font-size:12px;font-weight:700;color:#4B3FCB">Pratinjau</span>
+        <span style="font-size:13px;font-weight:700;background:#fff;border-radius:10px;padding:6px 10px">{{qaType}}</span>
+        <span style="font-size:13px;font-weight:800;background:#fff;border-radius:10px;padding:6px 10px;{{bs}}">{{qaAmount}}</span>
+        <span style="font-size:13px;font-weight:600;background:#fff;border-radius:10px;padding:6px 10px">{{qaDesc}}</span>
+        <span style="font-size:13px;font-weight:600;background:#fff;border-radius:10px;padding:6px 10px">{{qaCat}}</span>
+        <span style="font-size:13px;font-weight:600;background:#fff;border-radius:10px;padding:6px 10px">{{qaWallet}}</span>
+        <div style="flex:1 1 0"></div>
+        <button onClick="{{saveQa}}" style="border:0;background:#4B3FCB;color:#fff;border-radius:12px;padding:0 18px;min-height:44px;font-size:13px;font-weight:700">Simpan 1-klik</button>
+      </div>
+    </sc-if>
+
+    <!-- Title -->
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px">
+      <div>
+        <h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-0.5px">Ringkasan Keuangan</h1>
+        <div style="font-size:14px;font-weight:500;color:#5B5F80;margin-top:4px">Siklus gajian 28 Okt – 27 Nov 2026 · sisa 14 hari</div>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#5B5F80">Jumat, 13 November 2026</div>
+    </div>
+
+    <!-- Hero cards -->
+    <div style="display:flex;flex-wrap:wrap;gap:20px">
+
+      <section aria-label="Safe-to-Spend hari ini" style="box-sizing:border-box;flex:1.25 1 340px;min-height:220px;border-radius:24px;padding:24px;background:linear-gradient(135deg,#FFE9D6 0%,#FFD9DE 55%,#E3DDFB 100%);box-shadow:0 14px 30px rgba(242,107,75,0.14);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:700">Safe-to-Spend Hari Ini</span>
+          <span style="font-size:12px;font-weight:700;background:rgba(255,255,255,0.75);border-radius:999px;padding:5px 10px;color:#8A3A1D">Hero widget</span>
+        </div>
+        <div style="font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1;{{bs}}">Rp 150.000</div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px">
+            <span>Terpakai <span style="{{bs}}">Rp 62.000</span></span>
+            <span>Sisa <span style="{{bs}}">Rp 88.000</span></span>
+          </div>
+          <div style="height:10px;border-radius:999px;background:rgba(255,255,255,0.7);overflow:hidden"><div style="width:41%;height:100%;border-radius:999px;background:#F26B4B"></div></div>
+        </div>
+        <div style="margin-top:auto;font-size:12.5px;line-height:1.5;color:#4A3A44">(Sisa budget <span style="{{bs}}">Rp 2.600.000</span> − tagihan rutin <span style="{{bs}}">Rp 500.000</span>) ÷ 14 hari</div>
+      </section>
+
+      <section aria-label="Total saldo dompet" style="box-sizing:border-box;flex:1 1 300px;min-height:220px;border-radius:24px;padding:24px;background:linear-gradient(135deg,#F3E6D8 0%,#DAD9FB 100%);box-shadow:0 14px 30px rgba(75,63,203,0.14);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:700">Total Saldo</span>
+          <span style="font-size:12px;font-weight:700;color:#2B2670;text-decoration:underline">4 dompet</span>
+        </div>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-0.8px;line-height:1;{{bs}}">Rp 12.480.000</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:auto">
+          <sc-for list="{{wallets}}" as="w" hint-placeholder-count="4">
+            <div style="flex:1 1 120px;background:rgba(255,255,255,0.72);border-radius:14px;padding:10px 12px">
+              <div style="font-size:12px;font-weight:600;color:#4A4E70">{{w.name}}</div>
+              <div style="font-size:13.5px;font-weight:800;margin-top:2px;{{w.bs}}">{{w.amount}}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-label="Utang dan piutang" style="box-sizing:border-box;flex:1 1 300px;min-height:220px;border-radius:24px;padding:24px;background:linear-gradient(135deg,#E6F7D9 0%,#C9F2DC 100%);box-shadow:0 14px 30px rgba(18,160,122,0.14);display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:700">Utang &amp; Piutang Aktif</span>
+          <span style="font-size:12px;font-weight:700;background:#FDE1DF;color:#9E2019;border-radius:999px;padding:5px 10px">1 terlambat</span>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:600;color:#355C4C">Piutang (orang berutang ke kamu)</div>
+          <div style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-top:2px;{{bs}}">Rp 385.000</div>
+          <div style="font-size:12.5px;font-weight:600;color:#355C4C;margin-top:2px">3 orang</div>
+        </div>
+        <div style="margin-top:auto;background:rgba(255,255,255,0.72);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#4A4E70">Utang kamu</div>
+            <div style="font-size:15px;font-weight:800;{{bs}}">Rp 1.200.000</div>
+          </div>
+          <div style="font-size:12px;font-weight:600;color:#4A4E70">1 orang · 6 cicilan tersisa</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Metrics row -->
+    <div style="display:flex;flex-wrap:wrap;gap:20px;border-top:1px solid #ECEEF7;padding-top:24px">
+      <sc-for list="{{metrics}}" as="m" hint-placeholder-count="3">
+        <section style="box-sizing:border-box;flex:1 1 280px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <div style="font-size:13px;font-weight:600;color:#5B5F80">{{m.label}}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:{{m.color}};{{m.bs}}">{{m.value}}</span>
+              <span style="font-size:12px;font-weight:700;border-radius:999px;padding:4px 9px;{{m.chipSt}}">{{m.chip}}</span>
+            </div>
+            <div style="font-size:12px;font-weight:500;color:#5B5F80">{{m.sub}}</div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:6px;height:60px" aria-hidden="true">
+            <sc-for list="{{m.bars}}" as="b" hint-placeholder-count="7">
+              <div style="width:12px;border-radius:5px;{{b.st}}"></div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+
+    <!-- Budget + Ghost -->
+    <div style="display:flex;flex-wrap:wrap;gap:20px">
+      <section style="box-sizing:border-box;flex:1.5 1 420px;background:#FAFAFE;border:1px solid #ECEEF7;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <h2 style="margin:0;font-size:18px;font-weight:800">Budget Bulanan</h2>
+          <a href="#" style="font-size:13px;font-weight:700;color:#4B3FCB">Atur budget</a>
+        </div>
+        <sc-for list="{{budgets}}" as="b" hint-placeholder-count="4">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:700">{{b.name}}</span>
+              <span style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:#4A4E70;{{b.bs}}">{{b.used}} / {{b.limit}}</span>
+                <span style="font-size:12px;font-weight:700;border-radius:999px;padding:4px 9px;{{b.tagSt}}">{{b.pct}}% · {{b.tag}}</span>
+              </span>
+            </div>
+            <div style="height:10px;border-radius:999px;background:#E8EAF6;overflow:hidden"><div style="height:100%;border-radius:999px;{{b.barSt}}"></div></div>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="box-sizing:border-box;flex:1 1 300px;background:#FAFAFE;border:1px solid #ECEEF7;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <h2 style="margin:0;font-size:18px;font-weight:800">Kebocoran Halus</h2>
+          <span style="font-size:12px;font-weight:700;background:#FFF1CC;color:#7A5600;border-radius:999px;padding:5px 10px">8% pengeluaran</span>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:600;color:#5B5F80">Transaksi kecil berulang bulan ini</div>
+          <div style="font-size:28px;font-weight:800;letter-spacing:-0.5px;{{bs}}">Rp 312.000</div>
+        </div>
+        <sc-for list="{{ghosts}}" as="g" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;margin-bottom:6px">
+              <span>{{g.name}} <span style="color:#5B5F80;font-weight:500">· {{g.count}}×</span></span>
+              <span style="font-weight:700;{{g.bs}}">{{g.total}}</span>
+            </div>
+            <div style="height:8px;border-radius:999px;background:#E8EAF6;overflow:hidden"><div style="height:100%;border-radius:999px;background:#4B3FCB;{{g.w}}"></div></div>
+          </div>
+        </sc-for>
+        <div style="font-size:12.5px;line-height:1.5;color:#4A4E70;margin-top:auto">Kopi harian paling sering muncul. Mengurangi 3× per bulan menambah Safe-to-Spend harian.</div>
+      </section>
+    </div>
+
+    <!-- Transactions + Upcoming -->
+    <div style="display:flex;flex-wrap:wrap;gap:20px">
+      <section style="box-sizing:border-box;flex:1.6 1 440px;background:#FAFAFE;border:1px solid #ECEEF7;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+          <h2 style="margin:0;font-size:18px;font-weight:800">Transaksi Terbaru</h2>
+          <a href="#" style="font-size:13px;font-weight:700;color:#4B3FCB">Lihat semua</a>
+        </div>
+        <sc-for list="{{txs}}" as="t" hint-placeholder-count="6">
+          <div>
+            <sc-if value="{{t.isHead}}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;font-weight:700;color:#5B5F80;padding:12px 0 6px;letter-spacing:0.2px">{{t.head}}</div>
+            </sc-if>
+            <sc-if value="{{t.isRow}}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #F0F1F8">
+                <div style="width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:flex;align-items:center;justify-content:center;{{t.iconSt}}">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.d}}"></path></svg>
+                </div>
+                <div style="flex:1 1 0;min-width:0">
+                  <div style="font-size:14px;font-weight:700">{{t.title}}</div>
+                  <div style="font-size:12.5px;font-weight:500;color:#5B5F80;margin-top:2px">{{t.sub}}</div>
+                </div>
+                <div style="font-size:14px;font-weight:800;white-space:nowrap;{{t.amtSt}}">{{t.amount}}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </section>
+
+      <div style="box-sizing:border-box;flex:1 1 320px;display:flex;flex-direction:column;gap:20px">
+        <section style="background:#FAFAFE;border:1px solid #ECEEF7;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+            <h2 style="margin:0;font-size:18px;font-weight:800">Tagihan Mendatang</h2>
+            <span style="font-size:13px;font-weight:700;color:#5B5F80;{{bs}}">Rp 500.000</span>
+          </div>
+          <sc-for list="{{bills}}" as="b" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F0F1F8">
+              <div style="width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:flex;align-items:center;justify-content:center;{{b.iconSt}}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{b.d}}"></path></svg>
+              </div>
+              <div style="flex:1 1 0;min-width:0">
+                <div style="font-size:14px;font-weight:700">{{b.title}}</div>
+                <div style="font-size:12.5px;font-weight:500;color:#5B5F80;margin-top:2px">{{b.sub}}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:14px;font-weight:800;{{b.bs}}">{{b.amount}}</div>
+                <div style="font-size:12px;font-weight:700;color:#4B3FCB;margin-top:2px">{{b.when}}</div>
+              </div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="background:#FAFAFE;border:1px solid #ECEEF7;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:6px">
+          <h2 style="margin:0 0 8px;font-size:18px;font-weight:800">Piutang Perlu Ditagih</h2>
+          <sc-for list="{{debts}}" as="d" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F0F1F8;flex-wrap:wrap">
+              <div style="flex:1 1 140px;min-width:0">
+                <div style="font-size:14px;font-weight:700">{{d.name}} <span style="font-size:13px;font-weight:700;{{d.bs}}">{{d.amount}}</span></div>
+                <div style="margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <span style="font-size:12px;font-weight:700;border-radius:999px;padding:3px 9px;{{d.tagSt}}">{{d.tag}}</span>
+                  <span style="font-size:12px;font-weight:500;color:#5B5F80">{{d.note}}</span>
+                </div>
+              </div>
+              <a href="#" aria-label="Kirim pengingat WhatsApp" style="display:flex;align-items:center;gap:6px;border-radius:12px;background:#E3F7EC;color:#0B6B52;padding:0 12px;min-height:44px;font-size:12.5px;font-weight:700">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"></path></svg>
+                <span>Tagih via WA</span>
+              </a>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  state = { blur: false, qa: 'Kopi kenangan 24rb gopay' };
+
+  renderVals() {
+    const s = this.state;
+    const bs = s.blur ? 'filter:blur(7px);user-select:none;' : '';
+    const fmt = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
+
+    const navOn = 'background:#fff;color:#4B3FCB;box-shadow:0 6px 16px rgba(75,63,203,0.10);';
+    const navOff = 'color:#4A4E70;';
+    const nav1 = [
+      { label: 'Dashboard', d: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z', st: navOn },
+      { label: 'Transaksi', d: 'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4', st: navOff },
+      { label: 'Dompet', d: 'M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5', st: navOff },
+      { label: 'Utang & Piutang', d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75', st: navOff },
+      { label: 'Budget', d: 'M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z', st: navOff },
+      { label: 'Laporan', d: 'M3 3v18h18M7 16v-5M12 16V7M17 16v-3', st: navOff }
+    ];
+    const nav2 = [
+      { label: 'Langganan', d: 'M2 5h20v14H2zM2 10h20' },
+      { label: 'Koneksi MCP', d: 'M12 22v-5M9 8V2M15 8V2M18 8v5a6 6 0 0 1-12 0V8z' },
+      { label: 'Pengaturan', d: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6' }
+    ];
+
+    const wallets = [
+      { name: 'Bank Utama', amount: fmt(6250000) },
+      { name: 'Dana Darurat', amount: fmt(5400000) },
+      { name: 'GoPay', amount: fmt(480000) },
+      { name: 'Tunai', amount: fmt(350000) }
+    ].map((w) => ({ ...w, bs }));
+
+    const mk = (vals, hi, base) => {
+      const max = Math.max(...vals);
+      return vals.map((v, i) => ({
+        st: 'height:' + Math.max(8, Math.round((v / max) * 58)) + 'px;background:' + (i === hi ? base : '#E8EAF6') + ';' + (i === hi ? 'box-shadow:0 8px 14px ' + base + '40;' : '')
+      }));
+    };
+    const metrics = [
+      { label: 'Pemasukan bulan ini', value: fmt(8500000), color: '#F26B4B', chip: 'Gaji Okt', chipSt: 'background:#E3F7EC;color:#0B6B52;', sub: '1 transaksi masuk', bars: mk([2, 3, 2, 4, 3, 2, 9], 6, '#F26B4B') },
+      { label: 'Pengeluaran bulan ini', value: fmt(3915000), color: '#4B3FCB', chip: 'Naik 4,3%', chipSt: 'background:#FFF1CC;color:#7A5600;', sub: 'dibanding bulan lalu', bars: mk([5, 7, 4, 8, 6, 9, 7], 5, '#4B3FCB') },
+      { label: 'Arus kas bersih', value: fmt(4585000), color: '#0B7F63', chip: 'Positif', chipSt: 'background:#E3F7EC;color:#0B6B52;', sub: 'pemasukan − pengeluaran', bars: mk([3, 4, 5, 5, 6, 7, 9], 6, '#12B58B') }
+    ].map((m) => ({ ...m, bs }));
+
+    const cls = (pct) => pct > 90
+      ? { tag: 'Hampir habis', tagSt: 'background:#FDE1DF;color:#9E2019;', bar: '#D6372F' }
+      : pct > 70
+        ? { tag: 'Waspada', tagSt: 'background:#FFF1CC;color:#7A5600;', bar: '#E0A100' }
+        : { tag: 'Aman', tagSt: 'background:#DDF5EC;color:#0B6B52;', bar: '#12A07A' };
+    const budgets = [
+      ['Makan & Minum', 1450000, 2000000],
+      ['Transport', 380000, 600000],
+      ['Hiburan', 540000, 600000],
+      ['Langganan', 280000, 300000]
+    ].map(([name, used, limit]) => {
+      const pct = Math.round((used / limit) * 100);
+      const c = cls(pct);
+      return { name, used: fmt(used), limit: fmt(limit), pct, tag: c.tag, tagSt: c.tagSt, barSt: 'width:' + Math.min(pct, 100) + '%;background:' + c.bar + ';', bs };
+    });
+
+    const ghosts = [
+      { name: 'Kopi harian', count: 9, total: fmt(216000), w: 'width:100%;' },
+      { name: 'Biaya admin transfer', count: 8, total: fmt(64000), w: 'width:30%;' },
+      { name: 'Ongkir', count: 3, total: fmt(32000), w: 'width:15%;' }
+    ].map((g) => ({ ...g, bs }));
+
+    const T = {
+      coffee: 'M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4zM6 2v3M10 2v3M14 2v3',
+      food: 'M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7',
+      car: 'M5 17h14M3 13l2-6h14l2 6v4H3zM7 17v2M17 17v2',
+      users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+      swap: 'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4'
+    };
+    const out = 'color:#1B1D3A;';
+    const exp = { iconSt: 'background:#FFE9E3;color:#B8431F;', amtSt: out };
+    const rows = [
+      { head: 'Hari ini · Jum, 13 Nov' },
+      { d: T.coffee, title: 'Kopi Kenangan', sub: 'Makan & Minum · GoPay', amount: '− Rp 24.000', ...exp },
+      { d: T.food, title: 'Makan siang warteg', sub: 'Makan & Minum · Tunai', amount: '− Rp 22.000', ...exp },
+      { d: T.car, title: 'Grab ke kantor', sub: 'Transport · GoPay', amount: '− Rp 16.000', iconSt: 'background:#E6F0FF;color:#2352B8;', amtSt: out },
+      { head: 'Kemarin · Kam, 12 Nov' },
+      { d: T.users, title: 'Split bill bakso', sub: 'Porsi pribadi Rp 38.000 · piutang Andi', amount: '− Rp 76.000', iconSt: 'background:#F1E9FF;color:#6A3FC4;', amtSt: out },
+      { d: T.swap, title: 'Isi saldo GoPay', sub: 'Transfer · Bank Utama → GoPay', amount: 'Rp 200.000', iconSt: 'background:#EDEFF8;color:#4A4E70;', amtSt: 'color:#5B5F80;' }
+    ];
+    const txs = rows.map((r) => r.head
+      ? { isHead: true, isRow: false, head: r.head }
+      : { isHead: false, isRow: true, ...r, amtSt: r.amtSt + bs });
+
+    const bills = [
+      { d: 'M2 7h20v13H2zM17 2l-5 5-5-5', title: 'Netflix', sub: 'Auto-debet GoPay', amount: fmt(54000), when: 'Besok', iconSt: 'background:#E5483F;' },
+      { d: 'M13 2 3 14h9l-1 8 10-12h-9z', title: 'Listrik', sub: 'Token PLN · 16 Nov', amount: fmt(196000), when: '3 hari lagi', iconSt: 'background:#2F6BFF;' },
+      { d: 'M7 2h10v20H7zM12 18h.01', title: 'Cicilan HP', sub: 'Bank Utama · 20 Nov', amount: fmt(250000), when: '7 hari lagi', iconSt: 'background:#F5A524;' }
+    ].map((b) => ({ ...b, bs }));
+
+    const debts = [
+      { name: 'Sari', amount: fmt(150000), tag: 'Terlambat 3 hari', tagSt: 'background:#FDE1DF;color:#9E2019;', note: 'Pinjaman' },
+      { name: 'Andi', amount: fmt(38000), tag: '2 hari lagi', tagSt: 'background:#FFF1CC;color:#7A5600;', note: 'Patungan bakso' },
+      { name: 'Budi', amount: fmt(197000), tag: '12 hari lagi', tagSt: 'background:#DDF5EC;color:#0B6B52;', note: 'Tiket konser' }
+    ].map((d) => ({ ...d, bs }));
+
+    // Quick-Add parser
+    const q = s.qa || '';
+    const m = q.match(/(\d+(?:[.,]\d+)*)\s*(rb|ribu|k|jt|juta)?/i);
+    let amt = 0;
+    if (m) {
+      let raw = m[1];
+      if (/^\d{1,3}(\.\d{3})+$/.test(raw)) raw = raw.replace(/\./g, '');
+      let v = parseFloat(raw.replace(',', '.'));
+      const u = (m[2] || '').toLowerCase();
+      if (u === 'rb' || u === 'ribu' || u === 'k') v *= 1000;
+      else if (u === 'jt' || u === 'juta') v *= 1000000;
+      amt = Math.round(v) || 0;
+    }
+    const wallet = /gopay/i.test(q) ? 'GoPay' : /tunai|cash/i.test(q) ? 'Tunai' : 'Bank Utama';
+    const type = /gaji|terima|masuk|bonus/i.test(q) ? 'Pemasukan' : 'Pengeluaran';
+    const cat = type === 'Pemasukan' ? 'Gaji' : /kopi|makan|bakso|nasi|kafe|warteg|jajan/i.test(q) ? 'Makan & Minum' : /grab|gojek|ojek|bensin|tol|parkir/i.test(q) ? 'Transport' : /netflix|spotify|langganan/i.test(q) ? 'Langganan' : 'Lainnya';
+    let desc = q;
+    if (m) desc = desc.replace(m[0], '');
+    desc = desc.replace(/gopay|bca|tunai|cash/ig, '').replace(/\s+/g, ' ').trim();
+    desc = desc.replace(/\b\w/g, (c) => c.toUpperCase());
+
+    return {
+      nav1, nav2, wallets, metrics, budgets, ghosts, txs, bills, debts, bs,
+      blurOn: s.blur,
+      blurLabel: s.blur ? 'Tampilkan nominal' : 'Samarkan nominal',
+      eyeD: s.blur ? 'M9.9 4.24A9.1 9.1 0 0 1 12 5c6.5 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68M6.61 6.61A13.5 13.5 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.39-1.61M2 2l20 20' : 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z',
+      eyeD2: s.blur ? 'M9.9 9.9a3 3 0 0 0 4.2 4.2' : 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6',
+      toggleBlur: () => this.setState({ blur: !this.state.blur }),
+      qa: s.qa,
+      onQa: (e) => this.setState({ qa: e.target.value }),
+      qaValid: amt > 0,
+      qaType: type, qaAmount: fmt(amt), qaDesc: desc || 'Tanpa keterangan', qaCat: cat, qaWallet: wallet,
+      saveQa: () => this.setState({ qa: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>
